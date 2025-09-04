@@ -1,0 +1,11 @@
+com/financialapp/config/SecurityConfig.class
+com/financialapp/service/UserService.class
+com/financialapp/dto/AuthResponse.class
+com/financialapp/security/JwtUtil.class
+com/financialapp/controller/AuthController.class
+com/financialapp/model/Role.class
+com/financialapp/repository/UserRepository.class
+com/financialapp/model/User.class
+com/financialapp/dto/LoginRequest.class
+com/financialapp/dto/SignUpRequest.class
+com/financialapp/FinancialBackendApplication.class
