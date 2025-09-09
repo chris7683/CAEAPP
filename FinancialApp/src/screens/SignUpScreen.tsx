@@ -115,7 +115,7 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ onNavigateToLogin, onSignUp
   return (
     <SafeAreaView style={styles.container}>
       <LinearGradient
-        colors={['#667eea', '#764ba2']}
+        colors={['#1e3a8a', '#1e40af']}
         style={styles.gradient}
       >
         <KeyboardAvoidingView
@@ -161,7 +161,7 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ onNavigateToLogin, onSignUp
                     autoCapitalize="none"
                     autoCorrect={false}
                     returnKeyType="next"
-                    selectionColor="#667eea"
+                    selectionColor="#1e40af"
                     underlineColorAndroid="transparent"
                     autoComplete="off"
                     textContentType="none"
@@ -181,7 +181,7 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ onNavigateToLogin, onSignUp
                     autoCapitalize="none"
                     autoCorrect={false}
                     returnKeyType="next"
-                    selectionColor="#667eea"
+                    selectionColor="#1e40af"
                     underlineColorAndroid="transparent"
                     autoComplete="off"
                     textContentType="none"
@@ -201,7 +201,7 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ onNavigateToLogin, onSignUp
                     autoCapitalize="none"
                     autoCorrect={false}
                     returnKeyType="next"
-                    selectionColor="#667eea"
+                    selectionColor="#1e40af"
                     underlineColorAndroid="transparent"
                     importantForAutofill="no"
                     textContentType="oneTimeCode"
@@ -233,7 +233,7 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ onNavigateToLogin, onSignUp
                     autoCapitalize="none"
                     autoCorrect={false}
                     returnKeyType="done"
-                    selectionColor="#667eea"
+                    selectionColor="#1e40af"
                     underlineColorAndroid="transparent"
                     importantForAutofill="no"
                     textContentType="oneTimeCode"
@@ -264,7 +264,7 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ onNavigateToLogin, onSignUp
                     keyboardType="phone-pad"
                     autoCorrect={false}
                     returnKeyType="done"
-                    selectionColor="#667eea"
+                    selectionColor="#1e40af"
                     underlineColorAndroid="transparent"
                     autoComplete="off"
                     textContentType="none"
@@ -402,7 +402,6 @@ const styles = StyleSheet.create({
     textAlignVertical: 'center',
     backgroundColor: 'transparent',
     borderWidth: 0,
-    outline: 'none',
     height: '100%',
   },
   eyeIcon: {
@@ -431,7 +430,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   signUpButton: {
-    backgroundColor: '#667eea',
+    backgroundColor: '#1e40af',
     borderRadius: 12,
     height: 48,
     justifyContent: 'center',
@@ -463,14 +462,14 @@ const styles = StyleSheet.create({
   },
   loginButton: {
     borderWidth: 2,
-    borderColor: '#667eea',
+    borderColor: '#1e40af',
     borderRadius: 12,
     height: 48,
     justifyContent: 'center',
     alignItems: 'center',
   },
   loginButtonText: {
-    color: '#667eea',
+    color: '#1e40af',
     fontSize: 16,
     fontWeight: '600',
   },

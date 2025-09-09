@@ -263,7 +263,7 @@ const TransactionsScreen: React.FC<TransactionsScreenProps> = ({ onBack }) => {
 
   return (
     <LinearGradient
-      colors={['#667eea', '#764ba2']}
+      colors={['#1e3a8a', '#1e40af']}
       style={styles.container}
     >
       <ScrollView
@@ -355,7 +355,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#667eea',
+    backgroundColor: '#1e3a8a',
   },
   loadingText: {
     color: '#fff',
@@ -386,7 +386,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
-  filterButton: {
+  headerFilterButton: {
     padding: 8,
     borderRadius: 20,
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
@@ -441,7 +441,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   activeFilterText: {
-    color: '#667eea',
+    color: '#1e40af',
   },
   transactionsContainer: {
     marginHorizontal: 16,

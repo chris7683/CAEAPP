@@ -20,6 +20,11 @@ interface LandingScreenProps {
   onNavigateToTransactions: () => void;
   onNavigateToTransfer: () => void;
   onNavigateToBills: () => void;
+  onNavigateToAccountManagement: () => void;
+  onNavigateToBudgetTracker: () => void;
+  onNavigateToSavingsGoals: () => void;
+  onNavigateToNotifications: () => void;
+  onNavigateToSettings: () => void;
 }
 
 const LandingScreen: React.FC<LandingScreenProps> = ({ 
@@ -27,7 +32,12 @@ const LandingScreen: React.FC<LandingScreenProps> = ({
   onNavigateToBalance, 
   onNavigateToTransactions, 
   onNavigateToTransfer, 
-  onNavigateToBills 
+  onNavigateToBills,
+  onNavigateToAccountManagement,
+  onNavigateToBudgetTracker,
+  onNavigateToSavingsGoals,
+  onNavigateToNotifications,
+  onNavigateToSettings
 }) => {
   const [userInfo, setUserInfo] = useState<{
     email: string;
@@ -81,29 +91,63 @@ const LandingScreen: React.FC<LandingScreenProps> = ({
   };
 
   const quickActions = [
+    // Core Banking
     {
       title: 'View Balance',
       icon: 'account-balance-wallet',
-      color: '#4CAF50',
+      color: '#1e40af',
+      category: 'Banking',
       onPress: onNavigateToBalance,
     },
     {
       title: 'Transactions',
       icon: 'history',
-      color: '#2196F3',
+      color: '#059669',
+      category: 'Banking',
       onPress: onNavigateToTransactions,
     },
     {
       title: 'Transfer Money',
       icon: 'send',
-      color: '#FF9800',
+      color: '#dc2626',
+      category: 'Banking',
       onPress: onNavigateToTransfer,
     },
     {
       title: 'Pay Bills',
       icon: 'receipt',
-      color: '#9C27B0',
+      color: '#7c3aed',
+      category: 'Banking',
       onPress: onNavigateToBills,
+    },
+    // Account Management
+    {
+      title: 'My Accounts',
+      icon: 'account-balance',
+      color: '#f59e0b',
+      category: 'Management',
+      onPress: onNavigateToAccountManagement,
+    },
+    {
+      title: 'Budget Tracker',
+      icon: 'pie-chart',
+      color: '#ec4899',
+      category: 'Management',
+      onPress: onNavigateToBudgetTracker,
+    },
+    {
+      title: 'Savings Goals',
+      icon: 'savings',
+      color: '#06b6d4',
+      category: 'Management',
+      onPress: onNavigateToSavingsGoals,
+    },
+    {
+      title: 'Notifications',
+      icon: 'notifications',
+      color: '#8b5cf6',
+      category: 'Management',
+      onPress: onNavigateToNotifications,
     },
   ];
 
@@ -113,7 +157,7 @@ const LandingScreen: React.FC<LandingScreenProps> = ({
       title: 'Personal Loan',
       description: 'Get up to EGP 500,000 with competitive rates',
       icon: 'money',
-      color: '#4CAF50',
+      color: '#1e40af',
       discount: '5.9% APR',
       validUntil: '2024-03-31',
     },
@@ -122,7 +166,7 @@ const LandingScreen: React.FC<LandingScreenProps> = ({
       title: 'Credit Card',
       description: 'Zero annual fee for first year',
       icon: 'credit-card',
-      color: '#2196F3',
+      color: '#1e40af',
       discount: '0% Fee',
       validUntil: '2024-02-28',
     },
@@ -131,7 +175,7 @@ const LandingScreen: React.FC<LandingScreenProps> = ({
       title: 'Savings Account',
       description: 'Earn 15% interest on new deposits',
       icon: 'savings',
-      color: '#FF9800',
+      color: '#1e40af',
       discount: '15% APY',
       validUntil: '2024-04-15',
     },
@@ -140,7 +184,7 @@ const LandingScreen: React.FC<LandingScreenProps> = ({
       title: 'Investment Fund',
       description: 'Start investing with EGP 1,000 minimum',
       icon: 'trending-up',
-      color: '#9C27B0',
+      color: '#1e40af',
       discount: 'No Fees',
       validUntil: '2024-06-30',
     },
@@ -156,7 +200,7 @@ const LandingScreen: React.FC<LandingScreenProps> = ({
 
   return (
     <LinearGradient
-      colors={['#667eea', '#764ba2']}
+      colors={['#1e3a8a', '#1e40af']}
       style={styles.container}
     >
       <ScrollView 
@@ -170,9 +214,14 @@ const LandingScreen: React.FC<LandingScreenProps> = ({
             <Text style={styles.welcomeText}>Welcome to EgyptBank!</Text>
             <Text style={styles.userName}>{userInfo?.username || 'User'}</Text>
           </View>
-          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-            <MaterialIcons name="logout" size={24} color="#fff" />
-          </TouchableOpacity>
+          <View style={styles.headerActions}>
+            <TouchableOpacity style={styles.settingsButton} onPress={onNavigateToSettings}>
+              <MaterialIcons name="settings" size={24} color="#fff" />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+              <MaterialIcons name="logout" size={24} color="#fff" />
+            </TouchableOpacity>
+          </View>
         </View>
 
         {/* Account Info Card */}
@@ -192,17 +241,39 @@ const LandingScreen: React.FC<LandingScreenProps> = ({
         {/* Quick Actions */}
         <View style={styles.quickActionsContainer}>
           <Text style={styles.sectionTitle}>Quick Actions</Text>
-          <View style={styles.actionsGrid}>
-            {quickActions.map((action, index) => (
-              <TouchableOpacity
-                key={index}
-                style={[styles.actionButton, { backgroundColor: action.color }]}
-                onPress={action.onPress}
-              >
-                <MaterialIcons name={action.icon as any} size={28} color="#fff" />
-                <Text style={styles.actionText}>{action.title}</Text>
-              </TouchableOpacity>
-            ))}
+          
+          {/* Banking Services */}
+          <View style={styles.categorySection}>
+            <Text style={styles.categoryTitle}>Banking Services</Text>
+            <View style={styles.actionsGrid}>
+              {quickActions.filter(action => action.category === 'Banking').map((action, index) => (
+                <TouchableOpacity
+                  key={index}
+                  style={[styles.actionButton, { backgroundColor: action.color }]}
+                  onPress={action.onPress}
+                >
+                  <MaterialIcons name={action.icon as any} size={24} color="#fff" />
+                  <Text style={styles.actionText}>{action.title}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+
+          {/* Account Management */}
+          <View style={styles.categorySection}>
+            <Text style={styles.categoryTitle}>Account Management</Text>
+            <View style={styles.actionsGrid}>
+              {quickActions.filter(action => action.category === 'Management').map((action, index) => (
+                <TouchableOpacity
+                  key={index}
+                  style={[styles.actionButton, { backgroundColor: action.color }]}
+                  onPress={action.onPress}
+                >
+                  <MaterialIcons name={action.icon as any} size={24} color="#fff" />
+                  <Text style={styles.actionText}>{action.title}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
           </View>
         </View>
 
@@ -269,7 +340,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#667eea',
+    backgroundColor: '#1e3a8a',
   },
   loadingText: {
     color: '#fff',
@@ -304,6 +375,16 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginTop: 4,
   },
+  headerActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  settingsButton: {
+    padding: 8,
+    marginRight: 8,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+  },
   logoutButton: {
     padding: 8,
     borderRadius: 20,
@@ -332,17 +413,17 @@ const styles = StyleSheet.create({
   accountName: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#1a1a1a',
     marginBottom: 4,
   },
   accountEmail: {
     fontSize: 14,
-    color: '#666',
+    color: '#444',
     marginBottom: 2,
   },
   accountPhone: {
     fontSize: 14,
-    color: '#666',
+    color: '#444',
   },
   quickActionsContainer: {
     marginHorizontal: 20,
@@ -352,7 +433,17 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     color: '#fff',
-    marginBottom: 16,
+    marginBottom: 20,
+  },
+  categorySection: {
+    marginBottom: 24,
+  },
+  categoryTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: 'rgba(255, 255, 255, 0.9)',
+    marginBottom: 12,
+    marginLeft: 4,
   },
   actionsGrid: {
     flexDirection: 'row',
@@ -361,7 +452,7 @@ const styles = StyleSheet.create({
   },
   actionButton: {
     width: (width - 60) / 2,
-    height: 100,
+    height: 80,
     borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
@@ -389,7 +480,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 12,
     fontSize: 14,
-    color: '#666',
+    color: '#444',
     lineHeight: 20,
   },
   appInfoContainer: {
@@ -455,7 +546,7 @@ const styles = StyleSheet.create({
   discountText: {
     fontSize: 12,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#1a1a1a',
   },
   offerContent: {
     marginBottom: 12,
@@ -463,21 +554,21 @@ const styles = StyleSheet.create({
   offerTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#1a1a1a',
     marginBottom: 4,
   },
   offerDescription: {
     fontSize: 13,
-    color: '#666',
+    color: '#444',
     marginBottom: 6,
     lineHeight: 18,
   },
   offerValidUntil: {
     fontSize: 11,
-    color: '#999',
+    color: '#666',
   },
   offerButton: {
-    backgroundColor: '#667eea',
+    backgroundColor: '#1e40af',
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderRadius: 8,

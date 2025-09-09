@@ -62,7 +62,7 @@ class ApiService {
   ): Promise<T> {
     const url = `${this.baseURL}${endpoint}`;
     
-    const defaultHeaders = {
+    const defaultHeaders: { [key: string]: string } = {
       'Content-Type': 'application/json',
     };
 

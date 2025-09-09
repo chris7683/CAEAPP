@@ -174,7 +174,7 @@ const TransferScreen: React.FC<TransferScreenProps> = ({ onBack }) => {
 
   return (
     <LinearGradient
-      colors={['#667eea', '#764ba2']}
+      colors={['#1e3a8a', '#1e40af']}
       style={styles.container}
     >
       <ScrollView
@@ -284,9 +284,6 @@ const TransferScreen: React.FC<TransferScreenProps> = ({ onBack }) => {
               keyboardType="numeric"
               selectionColor="#667eea"
               underlineColorAndroid="transparent"
-              backgroundColor="transparent"
-              borderWidth={0}
-              outline="none"
             />
           </View>
         </View>
@@ -302,9 +299,6 @@ const TransferScreen: React.FC<TransferScreenProps> = ({ onBack }) => {
             placeholderTextColor="#999"
             selectionColor="#667eea"
             underlineColorAndroid="transparent"
-            backgroundColor="transparent"
-            borderWidth={0}
-            outline="none"
             multiline
           />
         </View>
@@ -475,7 +469,7 @@ const styles = StyleSheet.create({
     marginLeft: 6,
   },
   activeTypeText: {
-    color: '#667eea',
+    color: '#1e40af',
   },
   section: {
     marginHorizontal: 16,
@@ -588,7 +582,7 @@ const styles = StyleSheet.create({
   transferButtonText: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#667eea',
+    color: '#1e40af',
   },
   quickAmountsContainer: {
     marginHorizontal: 16,

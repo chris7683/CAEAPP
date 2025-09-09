@@ -90,7 +90,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onNavigateToSignUp, onLoginSu
   return (
     <SafeAreaView style={styles.container}>
       <LinearGradient
-        colors={['#667eea', '#764ba2']}
+        colors={['#1e3a8a', '#1e40af']}
         style={styles.gradient}
       >
         <KeyboardAvoidingView
@@ -260,7 +260,6 @@ const styles = StyleSheet.create({
     color: '#333',
     backgroundColor: 'transparent',
     borderWidth: 0,
-    outline: 'none',
   },
   eyeIcon: {
     padding: 5,
@@ -270,12 +269,12 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   forgotPasswordText: {
-    color: '#667eea',
+    color: '#1e40af',
     fontSize: 14,
     fontWeight: '500',
   },
   loginButton: {
-    backgroundColor: '#667eea',
+    backgroundColor: '#1e40af',
     borderRadius: 12,
     height: 55,
     justifyContent: 'center',
@@ -314,7 +313,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   signUpButtonText: {
-    color: '#667eea',
+    color: '#1e40af',
     fontSize: 16,
     fontWeight: '600',
   },

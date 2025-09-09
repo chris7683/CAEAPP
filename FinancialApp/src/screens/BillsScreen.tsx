@@ -8,6 +8,7 @@ import {
   Dimensions,
   RefreshControl,
   FlatList,
+  Alert,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -285,7 +286,7 @@ const BillsScreen: React.FC<BillsScreenProps> = ({ onBack }) => {
 
   return (
     <LinearGradient
-      colors={['#667eea', '#764ba2']}
+      colors={['#1e3a8a', '#1e40af']}
       style={styles.container}
     >
       <ScrollView
@@ -404,7 +405,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#667eea',
+    backgroundColor: '#1e3a8a',
   },
   loadingText: {
     color: '#fff',
@@ -490,7 +491,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   activeFilterText: {
-    color: '#667eea',
+    color: '#1e40af',
   },
   billsContainer: {
     marginHorizontal: 20,
@@ -587,7 +588,7 @@ const styles = StyleSheet.create({
     marginLeft: 4,
   },
   payButton: {
-    backgroundColor: '#667eea',
+    backgroundColor: '#1e40af',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 15,
@@ -618,7 +619,7 @@ const styles = StyleSheet.create({
   },
   actionText: {
     fontSize: 12,
-    color: '#667eea',
+    color: '#1e40af',
     fontWeight: '600',
     marginTop: 8,
     textAlign: 'center',

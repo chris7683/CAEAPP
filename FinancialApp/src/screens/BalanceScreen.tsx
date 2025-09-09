@@ -128,7 +128,7 @@ const BalanceScreen: React.FC<BalanceScreenProps> = ({ onBack }) => {
 
   return (
     <LinearGradient
-      colors={['#667eea', '#764ba2']}
+      colors={['#1e3a8a', '#1e40af']}
       style={styles.container}
     >
       <ScrollView
@@ -251,7 +251,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#667eea',
+    backgroundColor: '#1e3a8a',
   },
   loadingText: {
     color: '#fff',
@@ -388,7 +388,7 @@ const styles = StyleSheet.create({
   },
   actionText: {
     fontSize: 11,
-    color: '#667eea',
+    color: '#1e40af',
     fontWeight: '600',
     marginTop: 6,
     textAlign: 'center',
