@@ -38,6 +38,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/accounts/**").permitAll()
+                        .requestMatchers("/transfers/**").permitAll()
                         .anyRequest().authenticated()
                 );
 
