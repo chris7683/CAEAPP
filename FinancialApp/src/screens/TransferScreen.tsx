@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons } from '@expo/vector-icons';
+import apiService, { Account, TransferRequest } from '../services/api';
 
 const { width, height } = Dimensions.get('window');
 
@@ -18,13 +19,7 @@ interface TransferScreenProps {
   onBack: () => void;
 }
 
-interface Account {
-  id: string;
-  name: string;
-  type: 'checking' | 'savings' | 'credit';
-  balance: number;
-  currency: string;
-}
+// Account interface is now imported from api.ts
 
 interface Contact {
   id: string;
@@ -44,38 +39,19 @@ const TransferScreen: React.FC<TransferScreenProps> = ({ onBack }) => {
   const [showAccountPicker, setShowAccountPicker] = useState(false);
   const [showContactPicker, setShowContactPicker] = useState(false);
   const [transferType, setTransferType] = useState<'internal' | 'external'>('internal');
+  const [loadingAccounts, setLoadingAccounts] = useState(true);
 
   useEffect(() => {
     loadData();
   }, []);
 
   const loadData = async () => {
-    // Simulate API call
-    setTimeout(() => {
-      setAccounts([
-        {
-          id: '1',
-          name: 'Current Account',
-          type: 'checking',
-          balance: 125000.00,
-          currency: 'EGP',
-        },
-        {
-          id: '2',
-          name: 'Savings Account',
-          type: 'savings',
-          balance: 500000.00,
-          currency: 'EGP',
-        },
-        {
-          id: '3',
-          name: 'Credit Card',
-          type: 'credit',
-          balance: -15000.00,
-          currency: 'EGP',
-        },
-      ]);
+    try {
+      setLoadingAccounts(true);
+      const accountsData = await apiService.getAccounts();
+      setAccounts(accountsData);
 
+      // Mock contacts for external transfers
       setContacts([
         {
           id: '1',
@@ -96,7 +72,12 @@ const TransferScreen: React.FC<TransferScreenProps> = ({ onBack }) => {
           email: 'mohamed@example.com',
         },
       ]);
-    }, 500);
+    } catch (error) {
+      console.error('Failed to load accounts:', error);
+      Alert.alert('Error', 'Failed to load accounts. Please try again.');
+    } finally {
+      setLoadingAccounts(false);
+    }
   };
 
   const formatCurrency = (amount: number, currency: string) => {
@@ -123,31 +104,54 @@ const TransferScreen: React.FC<TransferScreenProps> = ({ onBack }) => {
       return;
     }
 
+    if (fromAccount.id === toAccount.id) {
+      Alert.alert('Error', 'Cannot transfer to the same account');
+      return;
+    }
+
     setIsLoading(true);
 
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-      Alert.alert(
-        'Success',
-        `Transfer of ${formatCurrency(transferAmount, 'USD')} completed successfully!`,
-        [
-          {
-            text: 'OK',
-            onPress: () => {
-              setAmount('');
-              setDescription('');
-              setFromAccount(null);
-              setToAccount(null);
+    try {
+      const transferData: TransferRequest = {
+        fromAccountId: fromAccount.id,
+        toAccountId: toAccount.id,
+        amount: transferAmount,
+        description: description || undefined,
+      };
+
+      const result = await apiService.transferMoney(transferData);
+      
+      if (result.success) {
+        Alert.alert(
+          'Success',
+          `Transfer of ${formatCurrency(transferAmount, 'EGP')} completed successfully!`,
+          [
+            {
+              text: 'OK',
+              onPress: () => {
+                setAmount('');
+                setDescription('');
+                setFromAccount(null);
+                setToAccount(null);
+                // Reload accounts to show updated balances
+                loadData();
+              },
             },
-          },
-        ]
-      );
-    }, 2000);
+          ]
+        );
+      } else {
+        Alert.alert('Error', result.message || 'Transfer failed. Please try again.');
+      }
+    } catch (error) {
+      console.error('Transfer failed:', error);
+      Alert.alert('Error', 'Transfer failed. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const getAccountIcon = (type: string) => {
-    switch (type) {
+    switch (type.toLowerCase()) {
       case 'checking':
         return 'account-balance';
       case 'savings':
@@ -160,7 +164,7 @@ const TransferScreen: React.FC<TransferScreenProps> = ({ onBack }) => {
   };
 
   const getAccountColor = (type: string) => {
-    switch (type) {
+    switch (type.toLowerCase()) {
       case 'checking':
         return '#2196F3';
       case 'savings':
@@ -343,26 +347,32 @@ const TransferScreen: React.FC<TransferScreenProps> = ({ onBack }) => {
                 <MaterialIcons name="close" size={24} color="#666" />
               </TouchableOpacity>
             </View>
-            {accounts.map((account) => (
-              <TouchableOpacity
-                key={account.id}
-                style={styles.modalItem}
-                onPress={() => {
-                  setFromAccount(account);
-                  setShowAccountPicker(false);
-                }}
-              >
-                <View style={[styles.accountIcon, { backgroundColor: getAccountColor(account.type) }]}>
-                  <MaterialIcons name={getAccountIcon(account.type) as any} size={20} color="#fff" />
-                </View>
-                <View style={styles.accountInfo}>
-                  <Text style={styles.accountName}>{account.name}</Text>
-                  <Text style={styles.accountBalance}>
-                    {formatCurrency(account.balance, account.currency)}
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            ))}
+            {loadingAccounts ? (
+              <View style={styles.loadingContainer}>
+                <Text style={styles.loadingText}>Loading accounts...</Text>
+              </View>
+            ) : (
+              accounts.map((account) => (
+                <TouchableOpacity
+                  key={account.id}
+                  style={styles.modalItem}
+                  onPress={() => {
+                    setFromAccount(account);
+                    setShowAccountPicker(false);
+                  }}
+                >
+                  <View style={[styles.accountIcon, { backgroundColor: getAccountColor(account.type) }]}>
+                    <MaterialIcons name={getAccountIcon(account.type) as any} size={20} color="#fff" />
+                  </View>
+                  <View style={styles.accountInfo}>
+                    <Text style={styles.accountName}>{account.name}</Text>
+                    <Text style={styles.accountBalance}>
+                      {formatCurrency(account.balance, account.currency)}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              ))
+            )}
           </View>
         </View>
       )}
@@ -382,13 +392,15 @@ const TransferScreen: React.FC<TransferScreenProps> = ({ onBack }) => {
                 key={contact.id}
                 style={styles.modalItem}
                 onPress={() => {
-                  // In a real app, you'd create a temporary account object
+                  // For external transfers, create a temporary account object
                   setToAccount({
-                    id: contact.id,
+                    id: parseInt(contact.id),
+                    userId: 0,
                     name: contact.name,
                     type: 'checking',
                     balance: 0,
-                    currency: 'USD',
+                    currency: 'EGP',
+                    createdAt: new Date().toISOString(),
                   });
                   setShowContactPicker(false);
                 }}
@@ -638,6 +650,14 @@ const styles = StyleSheet.create({
     padding: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#f0f0f0',
+  },
+  loadingContainer: {
+    padding: 20,
+    alignItems: 'center',
+  },
+  loadingText: {
+    fontSize: 16,
+    color: '#666',
   },
 });
 

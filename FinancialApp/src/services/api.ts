@@ -49,6 +49,23 @@ export interface ApiError {
   message: string;
 }
 
+export interface Account {
+  id: number;
+  userId: number;
+  name: string;
+  type: string;
+  currency: string;
+  balance: number;
+  createdAt: string;
+}
+
+export interface TransferRequest {
+  fromAccountId: number;
+  toAccountId: number;
+  amount: number;
+  description?: string;
+}
+
 class ApiService {
   private baseURL: string;
 
@@ -152,6 +169,21 @@ class ApiService {
   async isAuthenticated(): Promise<boolean> {
     const token = await this.getStoredToken();
     return token !== null;
+  }
+
+  // Account methods
+  async getAccounts(): Promise<Account[]> {
+    return this.makeRequest<Account[]>('/accounts', {
+      method: 'GET',
+    });
+  }
+
+  // Transfer methods
+  async transferMoney(transferData: TransferRequest): Promise<{ success: boolean; message: string }> {
+    return this.makeRequest<{ success: boolean; message: string }>('/transfers', {
+      method: 'POST',
+      body: JSON.stringify(transferData),
+    });
   }
 }
 
