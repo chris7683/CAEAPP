@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons } from '@expo/vector-icons';
+import apiService, { Account } from '../services/api';
 
 const { width, height } = Dimensions.get('window');
 
@@ -17,14 +18,7 @@ interface BalanceScreenProps {
   onBack: () => void;
 }
 
-interface Account {
-  id: string;
-  name: string;
-  type: 'checking' | 'savings' | 'credit';
-  balance: number;
-  currency: string;
-  lastUpdated: string;
-}
+// Account interface is now imported from api.ts
 
 const BalanceScreen: React.FC<BalanceScreenProps> = ({ onBack }) => {
   const [accounts, setAccounts] = useState<Account[]>([]);
@@ -36,36 +30,14 @@ const BalanceScreen: React.FC<BalanceScreenProps> = ({ onBack }) => {
   }, []);
 
   const loadAccounts = async () => {
-    // Simulate API call
-    setTimeout(() => {
-      setAccounts([
-        {
-          id: '1',
-          name: 'Current Account',
-          type: 'checking',
-          balance: 125000.00,
-          currency: 'EGP',
-          lastUpdated: '2024-01-15T10:30:00Z',
-        },
-        {
-          id: '2',
-          name: 'Savings Account',
-          type: 'savings',
-          balance: 500000.00,
-          currency: 'EGP',
-          lastUpdated: '2024-01-15T10:30:00Z',
-        },
-        {
-          id: '3',
-          name: 'Credit Card',
-          type: 'credit',
-          balance: -15000.00,
-          currency: 'EGP',
-          lastUpdated: '2024-01-15T10:30:00Z',
-        },
-      ]);
+    try {
+      const accountsData = await apiService.getAccounts();
+      setAccounts(accountsData);
+    } catch (error) {
+      console.error('Failed to load accounts:', error);
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   const onRefresh = async () => {
@@ -75,7 +47,7 @@ const BalanceScreen: React.FC<BalanceScreenProps> = ({ onBack }) => {
   };
 
   const getAccountIcon = (type: string) => {
-    switch (type) {
+    switch (type.toLowerCase()) {
       case 'checking':
         return 'account-balance';
       case 'savings':
@@ -88,7 +60,7 @@ const BalanceScreen: React.FC<BalanceScreenProps> = ({ onBack }) => {
   };
 
   const getAccountColor = (type: string) => {
-    switch (type) {
+    switch (type.toLowerCase()) {
       case 'checking':
         return '#2196F3';
       case 'savings':
@@ -151,10 +123,10 @@ const BalanceScreen: React.FC<BalanceScreenProps> = ({ onBack }) => {
         <View style={styles.totalBalanceCard}>
           <Text style={styles.totalBalanceLabel}>Total Balance</Text>
           <Text style={styles.totalBalanceAmount}>
-            {formatCurrency(totalBalance, 'USD')}
+            {formatCurrency(totalBalance, 'EGP')}
           </Text>
           <Text style={styles.lastUpdated}>
-            Last updated: {formatDate(accounts[0]?.lastUpdated || new Date().toISOString())}
+            Last updated: {formatDate(accounts[0]?.createdAt || new Date().toISOString())}
           </Text>
         </View>
 
@@ -213,8 +185,8 @@ const BalanceScreen: React.FC<BalanceScreenProps> = ({ onBack }) => {
               <Text style={styles.summaryLabel}>Checking Accounts</Text>
               <Text style={styles.summaryValue}>
                 {formatCurrency(
-                  accounts.filter(a => a.type === 'checking').reduce((sum, a) => sum + a.balance, 0),
-                  'USD'
+                  accounts.filter(a => a.type.toLowerCase() === 'checking').reduce((sum, a) => sum + a.balance, 0),
+                  'EGP'
                 )}
               </Text>
             </View>
@@ -222,8 +194,8 @@ const BalanceScreen: React.FC<BalanceScreenProps> = ({ onBack }) => {
               <Text style={styles.summaryLabel}>Savings Accounts</Text>
               <Text style={styles.summaryValue}>
                 {formatCurrency(
-                  accounts.filter(a => a.type === 'savings').reduce((sum, a) => sum + a.balance, 0),
-                  'USD'
+                  accounts.filter(a => a.type.toLowerCase() === 'savings').reduce((sum, a) => sum + a.balance, 0),
+                  'EGP'
                 )}
               </Text>
             </View>
@@ -231,8 +203,8 @@ const BalanceScreen: React.FC<BalanceScreenProps> = ({ onBack }) => {
               <Text style={styles.summaryLabel}>Credit Cards</Text>
               <Text style={styles.summaryValue}>
                 {formatCurrency(
-                  accounts.filter(a => a.type === 'credit').reduce((sum, a) => sum + a.balance, 0),
-                  'USD'
+                  accounts.filter(a => a.type.toLowerCase() === 'credit').reduce((sum, a) => sum + a.balance, 0),
+                  'EGP'
                 )}
               </Text>
             </View>

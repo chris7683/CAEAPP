@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons } from '@expo/vector-icons';
+import apiService, { Transaction } from '../services/api';
 
 const { width, height } = Dimensions.get('window');
 
@@ -18,123 +19,27 @@ interface TransactionsScreenProps {
   onBack: () => void;
 }
 
-interface Transaction {
-  id: string;
-  type: 'income' | 'expense' | 'transfer';
-  amount: number;
-  currency: string;
-  description: string;
-  category: string;
-  date: string;
-  account: string;
-  status: 'completed' | 'pending' | 'failed';
-}
+// Transaction interface is now imported from api.ts
 
 const TransactionsScreen: React.FC<TransactionsScreenProps> = ({ onBack }) => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [selectedFilter, setSelectedFilter] = useState<'all' | 'income' | 'expense'>('all');
+  const [selectedFilter, setSelectedFilter] = useState<'all' | 'credit' | 'debit'>('all');
 
   useEffect(() => {
     loadTransactions();
   }, []);
 
   const loadTransactions = async () => {
-    // Simulate API call
-    setTimeout(() => {
-      setTransactions([
-        {
-          id: '1',
-          type: 'expense',
-          amount: -150.00,
-          currency: 'EGP',
-          description: 'Carrefour',
-          category: 'Food & Dining',
-          date: '2024-01-15T14:30:00Z',
-          account: 'Current Account',
-          status: 'completed',
-        },
-        {
-          id: '2',
-          type: 'income',
-          amount: 15000.00,
-          currency: 'EGP',
-          description: 'Salary Deposit',
-          category: 'Income',
-          date: '2024-01-14T09:00:00Z',
-          account: 'Current Account',
-          status: 'completed',
-        },
-        {
-          id: '3',
-          type: 'expense',
-          amount: -350.00,
-          currency: 'EGP',
-          description: 'Electricity Bill',
-          category: 'Utilities',
-          date: '2024-01-13T16:45:00Z',
-          account: 'Current Account',
-          status: 'completed',
-        },
-        {
-          id: '4',
-          type: 'transfer',
-          amount: -2000.00,
-          currency: 'EGP',
-          description: 'Transfer to Savings',
-          category: 'Transfer',
-          date: '2024-01-12T11:20:00Z',
-          account: 'Current Account',
-          status: 'completed',
-        },
-        {
-          id: '5',
-          type: 'expense',
-          amount: -80.00,
-          currency: 'EGP',
-          description: 'Costa Coffee',
-          category: 'Food & Dining',
-          date: '2024-01-11T08:15:00Z',
-          account: 'Credit Card',
-          status: 'pending',
-        },
-        {
-          id: '6',
-          type: 'expense',
-          amount: -250.00,
-          currency: 'EGP',
-          description: 'Jumia Purchase',
-          category: 'Shopping',
-          date: '2024-01-10T20:30:00Z',
-          account: 'Credit Card',
-          status: 'completed',
-        },
-        {
-          id: '7',
-          type: 'income',
-          amount: 500.00,
-          currency: 'EGP',
-          description: 'Freelance Work',
-          category: 'Income',
-          date: '2024-01-09T15:00:00Z',
-          account: 'Current Account',
-          status: 'completed',
-        },
-        {
-          id: '8',
-          type: 'expense',
-          amount: -100.00,
-          currency: 'EGP',
-          description: 'Uber Ride',
-          category: 'Transportation',
-          date: '2024-01-08T12:00:00Z',
-          account: 'Current Account',
-          status: 'completed',
-        },
-      ]);
+    try {
+      const transactionsData = await apiService.getTransactions();
+      setTransactions(transactionsData);
+    } catch (error) {
+      console.error('Failed to load transactions:', error);
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   const onRefresh = async () => {
@@ -163,13 +68,11 @@ const TransactionsScreen: React.FC<TransactionsScreenProps> = ({ onBack }) => {
   };
 
   const getTransactionColor = (type: string) => {
-    switch (type) {
-      case 'income':
+    switch (type.toLowerCase()) {
+      case 'credit':
         return '#4CAF50';
-      case 'expense':
+      case 'debit':
         return '#F44336';
-      case 'transfer':
-        return '#2196F3';
       default:
         return '#9E9E9E';
     }
@@ -215,41 +118,41 @@ const TransactionsScreen: React.FC<TransactionsScreenProps> = ({ onBack }) => {
 
   const filteredTransactions = transactions.filter(transaction => {
     if (selectedFilter === 'all') return true;
-    return transaction.type === selectedFilter;
+    return transaction.txnType.toLowerCase() === selectedFilter;
   });
 
   const totalIncome = transactions
-    .filter(t => t.type === 'income')
+    .filter(t => t.txnType.toLowerCase() === 'credit')
     .reduce((sum, t) => sum + t.amount, 0);
 
   const totalExpenses = transactions
-    .filter(t => t.type === 'expense')
+    .filter(t => t.txnType.toLowerCase() === 'debit')
     .reduce((sum, t) => sum + Math.abs(t.amount), 0);
 
   const renderTransaction = ({ item }: { item: Transaction }) => (
     <View style={styles.transactionCard}>
       <View style={styles.transactionHeader}>
-        <View style={[styles.transactionIcon, { backgroundColor: getTransactionColor(item.type) }]}>
-          <MaterialIcons name={getTransactionIcon(item.category) as any} size={20} color="#fff" />
+        <View style={[styles.transactionIcon, { backgroundColor: getTransactionColor(item.txnType) }]}>
+          <MaterialIcons name="receipt" size={20} color="#fff" />
         </View>
         <View style={styles.transactionInfo}>
           <Text style={styles.transactionDescription}>{item.description}</Text>
           <Text style={styles.transactionCategory}>{item.category}</Text>
-          <Text style={styles.transactionAccount}>{item.account}</Text>
+          <Text style={styles.transactionAccount}>Account ID: {item.accountId}</Text>
         </View>
         <View style={styles.transactionAmount}>
           <Text style={[
             styles.amountText,
-            { color: item.amount >= 0 ? '#4CAF50' : '#F44336' }
+            { color: item.txnType.toLowerCase() === 'credit' ? '#4CAF50' : '#F44336' }
           ]}>
-            {formatCurrency(item.amount, item.currency)}
+            {formatCurrency(item.amount, 'EGP')}
           </Text>
-          <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) }]}>
-            <Text style={styles.statusText}>{item.status}</Text>
+          <View style={[styles.statusBadge, { backgroundColor: '#4CAF50' }]}>
+            <Text style={styles.statusText}>completed</Text>
           </View>
         </View>
       </View>
-      <Text style={styles.transactionDate}>{formatDate(item.date)}</Text>
+      <Text style={styles.transactionDate}>{formatDate(item.occurredAt)}</Text>
     </View>
   );
 
@@ -287,15 +190,15 @@ const TransactionsScreen: React.FC<TransactionsScreenProps> = ({ onBack }) => {
         {/* Summary Cards */}
         <View style={styles.summaryContainer}>
           <View style={styles.summaryCard}>
-            <Text style={styles.summaryLabel}>Total Income</Text>
+            <Text style={styles.summaryLabel}>Total Credit</Text>
             <Text style={[styles.summaryAmount, { color: '#4CAF50' }]}>
-              {formatCurrency(totalIncome, 'USD')}
+              {formatCurrency(totalIncome, 'EGP')}
             </Text>
           </View>
           <View style={styles.summaryCard}>
-            <Text style={styles.summaryLabel}>Total Expenses</Text>
+            <Text style={styles.summaryLabel}>Total Debit</Text>
             <Text style={[styles.summaryAmount, { color: '#F44336' }]}>
-              {formatCurrency(totalExpenses, 'USD')}
+              {formatCurrency(totalExpenses, 'EGP')}
             </Text>
           </View>
         </View>
@@ -311,19 +214,19 @@ const TransactionsScreen: React.FC<TransactionsScreenProps> = ({ onBack }) => {
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.filterButton, selectedFilter === 'income' && styles.activeFilter]}
-            onPress={() => setSelectedFilter('income')}
+            style={[styles.filterButton, selectedFilter === 'credit' && styles.activeFilter]}
+            onPress={() => setSelectedFilter('credit')}
           >
-            <Text style={[styles.filterText, selectedFilter === 'income' && styles.activeFilterText]}>
-              Income
+            <Text style={[styles.filterText, selectedFilter === 'credit' && styles.activeFilterText]}>
+              Credit
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.filterButton, selectedFilter === 'expense' && styles.activeFilter]}
-            onPress={() => setSelectedFilter('expense')}
+            style={[styles.filterButton, selectedFilter === 'debit' && styles.activeFilter]}
+            onPress={() => setSelectedFilter('debit')}
           >
-            <Text style={[styles.filterText, selectedFilter === 'expense' && styles.activeFilterText]}>
-              Expenses
+            <Text style={[styles.filterText, selectedFilter === 'debit' && styles.activeFilterText]}>
+              Debit
             </Text>
           </TouchableOpacity>
         </View>
@@ -332,7 +235,7 @@ const TransactionsScreen: React.FC<TransactionsScreenProps> = ({ onBack }) => {
         <View style={styles.transactionsContainer}>
           <Text style={styles.sectionTitle}>
             {selectedFilter === 'all' ? 'All Transactions' : 
-             selectedFilter === 'income' ? 'Income' : 'Expenses'}
+             selectedFilter === 'credit' ? 'Credit Transactions' : 'Debit Transactions'}
           </Text>
           <FlatList
             data={filteredTransactions}

@@ -40,6 +40,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/accounts/**").permitAll()
                         .requestMatchers("/transfers/**").permitAll()
+                        .requestMatchers("/transactions/**").permitAll()
                         .anyRequest().authenticated()
                 );
 

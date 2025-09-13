@@ -66,6 +66,17 @@ export interface TransferRequest {
   description?: string;
 }
 
+export interface Transaction {
+  id: number;
+  userId: number;
+  accountId: number;
+  txnType: string;
+  category: string;
+  amount: number;
+  description: string;
+  occurredAt: string;
+}
+
 class ApiService {
   private baseURL: string;
 
@@ -183,6 +194,13 @@ class ApiService {
     return this.makeRequest<{ success: boolean; message: string }>('/transfers', {
       method: 'POST',
       body: JSON.stringify(transferData),
+    });
+  }
+
+  // Transaction methods
+  async getTransactions(): Promise<Transaction[]> {
+    return this.makeRequest<Transaction[]>('/transactions', {
+      method: 'GET',
     });
   }
 }
